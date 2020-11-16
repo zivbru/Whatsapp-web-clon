@@ -9,11 +9,48 @@ import { IconButton, Avatar } from '@material-ui/core';
 import { useConversation } from '../../Context/ConversationsProvider';
 
 const Sidebar = () => {
+  const [search, setSearch] = useState('');
+
   const {
     conversations,
     selectConversationIndex,
     selectedConversation,
   } = useConversation();
+  const [conversationsCopy, setConversationsCopy] = useState(conversations);
+
+  const selectConversation = (index) => {
+    selectConversationIndex(
+      conversations.findIndex(
+        (conversation) => conversation.id === conversationsCopy[index].id
+      )
+    );
+  };
+
+  const searchConversation = (e) => {
+    setSearch(e.target.value);
+    if (e.target.value) {
+      setConversationsCopy(
+        conversationsCopy.filter((conversation) => {
+          return (
+            conversation.groupName
+              .toString()
+              .toLowerCase()
+              .indexOf(e.target.value) >= 0
+            // ||
+            // conversation.recipients.filter((recipient) => {
+            //   return recipient.name.toString().indexOf(e.target.value) >= 0;
+            // }) ||
+            // conversation.messages.filter((message) => {
+            //   return message.text.toString().indexOf(e.target.value) >= 0;
+            // })
+          );
+        })
+      );
+    } else {
+      setConversationsCopy(conversations);
+    }
+  };
+
   return (
     <div className='sidebar'>
       <div className='sidebar-header'>
@@ -24,7 +61,7 @@ const Sidebar = () => {
           <IconButton>
             <DonutLargeIcon />
           </IconButton>
-          <IconButton onClick={() => console.log(11)}>
+          <IconButton>
             <ChatIcon />
           </IconButton>
           <IconButton>
@@ -36,11 +73,16 @@ const Sidebar = () => {
       <div className='sidebar-search'>
         <div className='sidebar-search-container'>
           <SearchOutlinedIcon />
-          <input type='text' placeholder='Search or start new chat' />
+          <input
+            type='text'
+            placeholder='Search or start new chat'
+            value={search}
+            onChange={searchConversation}
+          />
         </div>
       </div>
       <div className='sidebar-chats'>
-        {conversations.map((conversation, index) => (
+        {conversationsCopy.map((conversation, index) => (
           <SidebarChat
             key={index}
             style={
@@ -49,7 +91,7 @@ const Sidebar = () => {
                 : ''
             }
             conversation={conversation}
-            onClick={() => selectConversationIndex(index)}
+            onClick={() => selectConversation(index)}
           />
         ))}
       </div>

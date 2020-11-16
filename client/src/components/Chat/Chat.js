@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { Avatar, IconButton } from '@material-ui/core';
+import {
+  Avatar,
+  IconButton,
+  Dialog,
+  List,
+  ListItem,
+  ListItemText,
+} from '@material-ui/core';
 import { SearchOutlined, AttachFile, MoreVert } from '@material-ui/icons';
 import MicIcon from '@material-ui/icons/Mic';
 import InsertEmoticonOutlinedIcon from '@material-ui/icons/InsertEmoticonOutlined';
@@ -10,15 +17,25 @@ import { useConversation } from '../../Context/ConversationsProvider';
 const Chat = ({ id }) => {
   const [input, setInput] = useState('');
   const { selectedConversation } = useConversation();
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const openContactsModal = () => {
+    setModalOpen(true);
+  };
 
   const sendMessage = (e) => {
     e.preventDefault();
-    Api.post('/api/messages/new', {
-      message: input,
-      name: 'Demo',
-      date: new Date().toISOString(),
-      received: false,
-    });
+
+    // Api.post('/api/messages/new', {
+    //   message: input,
+    //   name: 'Demo',
+    //   date: new Date().toISOString(),
+    //   received: false,
+    // });
     setInput('');
   };
 
@@ -32,6 +49,19 @@ const Chat = ({ id }) => {
             {selectedConversation.recipients.map((obj) => obj.name).join(' ,')}
           </p>
         </div>
+        <div className='chat-header-modal'>
+          <Dialog open={modalOpen} onClose={closeModal}>
+            <List>
+              <ListItem
+                autoFocus
+                button
+                // onClick={() => handleListItemClick('addContact')}
+              >
+                <ListItemText primary='Add Contacts' />
+              </ListItem>
+            </List>
+          </Dialog>
+        </div>
         <div className='chat-header-right'>
           <IconButton>
             <SearchOutlined />
@@ -39,7 +69,7 @@ const Chat = ({ id }) => {
           <IconButton>
             <AttachFile />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={openContactsModal}>
             <MoreVert />
           </IconButton>
         </div>

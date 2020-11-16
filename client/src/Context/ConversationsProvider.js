@@ -6,7 +6,7 @@ export const useConversation = () => {
   return useContext(ConversationConetxt);
 };
 
-const ConversationsProvider = ({ children }) => {
+const ConversationsProvider = ({ id, children }) => {
   const [conversations, setConversations] = useState([
     {
       id: 1,
@@ -51,6 +51,14 @@ const ConversationsProvider = ({ children }) => {
   ]);
 
   const [selectedConversationIndex, setSelectedConversationIndex] = useState(0);
+
+  const addMessageToConversation = (recipients, text, id) => {};
+
+  const sendMessage = (recipients, text) => {
+    // send to db that message details
+
+    addMessageToConversation(recipients, text, id);
+  };
 
   const value = {
     conversations: conversations,
